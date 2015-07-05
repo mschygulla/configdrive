@@ -1,0 +1,19 @@
+#cloud-config
+
+users:
+  - name: core
+    passwd: $1$M2BQG7XM$Fd8wq49.oEb77.1f9jfA41
+    groups:
+      - sudo
+      - docker
+
+write_files:
+  - path: /home/core/.bash_profile
+    permissions: 0644
+    owner: docker
+    content: |
+      alias l='ls -lah'
+      alias la='ls -lAh'
+      alias ll='ls -lh'
+      alias ls='ls -G'
+      alias lsa='ls -lah'
