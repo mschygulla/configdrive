@@ -1,5 +1,30 @@
 #cloud-config
 
+coreos:
+  units:
+    - name: format-ephemeral.service
+      command: start
+      content: |
+        [Unit]
+        Description=Formats the ephemeral drive
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/usr/sbin/wipefs -f /dev/sda
+        ExecStart=/usr/sbin/mkfs.btrfs -f /dev/sda
+    - name: var-lib-docker.mount
+      command: start
+      content: |
+        [Unit]
+        Description=Mount ephemeral to /var/lib/docker
+        Requires=format-ephemeral.service
+        After=format-ephemeral.service
+        Before=docker.service
+        [Mount]
+        What=/dev/sda
+        Where=/var/lib/docker
+        Type=btrfs
+
 users:
   - name: core
     passwd: $1$M2BQG7XM$Fd8wq49.oEb77.1f9jfA41
